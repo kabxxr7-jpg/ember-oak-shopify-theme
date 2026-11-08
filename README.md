@@ -29,8 +29,8 @@ protected; the password is given with the link)
 | Quiz | Real metafield-driven scoring running in the browser on the live store; 6 unit tests | — |
 | Store locator | Real ZIP geocoding (one request to the free zippopotam.us API, cached), real distance maths, real metaobject data | The 24 stockists are invented; their coordinates sit near real neighbourhoods so distances look right |
 | Reviews | The slider is real | The quotes and names are written for the demo and labelled "Reviews (sample)" |
-| Checkout | Real Shopify checkout; test order #1001 was paid through it on 2026-11-08 | Test payment gateway: card number `1` approves, `2` declines, `3` errors. No money moves |
-| Digital download | Real product (no shipping) delivered by Shopify's own Digital Products app; the PDF is real | — |
+| Checkout | Real Shopify checkout; two test orders paid through it on 2026-11-08 ([evidence](docs/test-orders.md)) | Test payment gateway: card number `1` approves, `2` declines, `3` errors. No money moves |
+| Digital download | Real product (no shipping) fulfilled by Shopify's Digital Products app: test order #1002 was fulfilled automatically 6 s after payment and its download link issued (2026-11-08); the PDF is real | The emailed link was not delivered: the test buyer address was a placeholder |
 | Newsletter form | Real Shopify customer signup | No emails are sent from the demo |
 
 ## How each feature works
