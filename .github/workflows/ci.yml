@@ -9,6 +9,6 @@ jobs:
         with:
           node-version: 24
       - name: Unit tests (quiz scoring, locator maths and cache)
-        run: node --test tests/
+        run: node --test tests/*.test.mjs
       - name: Theme check
         run: npx -y @shopify/cli@5.0.1 theme check --path theme --fail-level error

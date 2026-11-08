@@ -108,7 +108,7 @@ shopify store auth -s <store>.myshopify.com --scopes write_products,write_metaob
 node tools/seed.mjs && node tools/seed-content.mjs
 shopify theme check --path theme
 shopify theme push --path theme --store <store>.myshopify.com --unpublished
-node --test tests/
+node --test tests/*.test.mjs
 ```
 
 Custom files (everything else under `theme/` is unmodified Dawn 16.1.1, except the settings, the header group and the locale strings):
@@ -125,7 +125,7 @@ theme/assets/eo-sections.css                theme/templates/index.json, page.qui
 ## Quality checks
 
 - **theme-check** (`shopify theme check`, CLI 5.0.1): 0 errors. 0 warnings in the custom files; the 9 warnings reported are all in unmodified Dawn 16.1.1 files (for example `UnusedAssign` in `main-search.liquid`).
-- **Unit tests:** `node --test tests/` runs 13 tests on the quiz scoring and the locator maths and cache.
+- **Unit tests:** `node --test tests/*.test.mjs` runs 13 tests on the quiz scoring and the locator maths and cache.
 - **Lighthouse 12.8.2** (live store, median of 3-5 runs):
   - Home: mobile performance 79, desktop 99
   - Quiz page: mobile performance 90
