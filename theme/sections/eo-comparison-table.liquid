@@ -1,0 +1,219 @@
+{%- comment -%}
+  Ember & Oak: product comparison table.
+  Columns are products picked in the theme editor; each "row" block reads one product metafield
+  (or price / add to cart), so merchants change what is compared without touching code.
+  Mobile: the first column stays put and the table scrolls sideways inside its own container.
+{%- endcomment -%}
+{{ 'eo-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'eo-cart.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign products = section.settings.products -%}
+{%- assign highlight = section.settings.highlight_index | minus: 1 -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding eo-compare">
+    <div class="eo-section-head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eo-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="{{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="rte eo-section-text">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if products.count == 0 -%}
+      <p class="eo-empty">{{ 'sections.eo_compare.empty' | t }}</p>
+    {%- else -%}
+      <div class="eo-compare__scroller" tabindex="0" role="region" aria-label="{{ section.settings.heading | default: 'Comparison' | escape }}">
+        <table class="eo-compare__table">
+          <caption class="visually-hidden">{{ section.settings.heading | escape }}</caption>
+          <thead>
+            <tr>
+              <td class="eo-compare__corner"></td>
+              {%- for product in products -%}
+                <th scope="col" class="{% if forloop.index0 == highlight %}is-highlight{% endif %}">
+                  {%- if forloop.index0 == highlight and section.settings.highlight_label != blank -%}
+                    <span class="eo-badge">{{ section.settings.highlight_label | escape }}</span>
+                  {%- endif -%}
+                  <a href="{{ product.url }}" class="eo-compare__product">
+                    {%- if product.featured_image -%}
+                      {{
+                        product.featured_image
+                        | image_url: width: 400
+                        | image_tag: loading: 'lazy', widths: '160, 240, 320, 400', sizes: '(min-width: 990px) 200px, 140px', class: 'eo-compare__img'
+                      }}
+                    {%- endif -%}
+                    <span class="eo-compare__title">{{ product.title | split: ' — ' | first | escape }}</span>
+                  </a>
+                </th>
+              {%- endfor -%}
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              <tr {{ block.shopify_attributes }}>
+                <th scope="row">
+                  {%- if block.type == 'add_to_cart' -%}
+                    <span class="visually-hidden">{{ block.settings.label | escape }}</span>
+                  {%- else -%}
+                    {{ block.settings.label | escape }}
+                  {%- endif -%}
+                </th>
+                {%- for product in products -%}
+                  <td class="{% if forloop.index0 == highlight %}is-highlight{% endif %}">
+                    {%- case block.type -%}
+                      {%- when 'price' -%}
+                        <span class="eo-compare__price">{{ product.price | money }}</span>
+                      {%- when 'add_to_cart' -%}
+                        {%- assign variant = product.selected_or_first_available_variant -%}
+                        {%- if variant.available -%}
+                          <button type="button" class="button button--small eo-btn" data-eo-add="{{ variant.id }}">
+                            <span class="eo-btn-label">{{ 'products.product.add_to_cart' | t }}</span>
+                          </button>
+                        {%- else -%}
+                          <span class="eo-muted">{{ 'products.product.sold_out' | t }}</span>
+                        {%- endif -%}
+                      {%- when 'metafield' -%}
+                        {%- assign mf = product.metafields.custom[block.settings.key] -%}
+                        {%- if mf == blank -%}
+                          <span class="eo-muted" aria-label="{{ 'sections.eo_compare.not_applicable' | t }}">—</span>
+                        {%- elsif mf.type contains 'list.' -%}
+                          <ul class="eo-chips" role="list">
+                            {%- for v in mf.value -%}
+                              <li>{{ v | replace: '-', ' ' | capitalize }}</li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- elsif block.settings.display == 'meter' -%}
+                          {%- liquid
+                            case mf.value
+                              when 'light'
+                                assign level = 1
+                              when 'medium-light'
+                                assign level = 2
+                              when 'medium'
+                                assign level = 3
+                              else
+                                assign level = 4
+                            endcase
+                          -%}
+                          <span class="eo-meter" role="img" aria-label="{{ mf.value | replace: '-', ' ' | capitalize }}">
+                            {%- for i in (1..4) -%}
+                              <span class="eo-meter__dot{% if i <= level %} is-on{% endif %}"></span>
+                            {%- endfor -%}
+                          </span>
+                          <span class="eo-meter__label">{{ mf.value | replace: '-', ' ' | capitalize }}</span>
+                        {%- else -%}
+                          {{ mf.value | replace: '-', ' ' | capitalize | escape }}
+                        {%- endif -%}
+                    {%- endcase -%}
+                  </td>
+                {%- endfor -%}
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+      <p class="eo-compare__hint" aria-hidden="true">{{ 'sections.eo_compare.swipe_hint' | t }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "tag": "section",
+  "class": "section eo-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Side by side" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Compare our coffees" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1"
+    },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "product_list", "id": "products", "label": "Products to compare", "limit": 6 },
+    { "type": "range", "id": "highlight_index", "label": "Highlight column (0 = none)", "min": 0, "max": 6, "step": 1, "default": 2 },
+    { "type": "text", "id": "highlight_label", "label": "Highlight badge", "default": "Most loved" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "metafield",
+      "name": "Metafield row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Row label", "default": "Roast" },
+        {
+          "type": "text",
+          "id": "key",
+          "label": "Product metafield key (custom namespace)",
+          "info": "For example roast_level, tasting_notes, origin, brew_methods, caffeine",
+          "default": "roast_level"
+        },
+        {
+          "type": "select",
+          "id": "display",
+          "label": "Display",
+          "options": [
+            { "value": "text", "label": "Text" },
+            { "value": "meter", "label": "Roast meter" }
+          ],
+          "default": "text"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price row",
+      "limit": 1,
+      "settings": [{ "type": "text", "id": "label", "label": "Row label", "default": "Price" }]
+    },
+    {
+      "type": "add_to_cart",
+      "name": "Add to cart row",
+      "limit": 1,
+      "settings": [{ "type": "text", "id": "label", "label": "Row label (screen readers only)", "default": "Add to cart" }]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison table",
+      "blocks": [
+        { "type": "metafield", "settings": { "label": "Roast", "key": "roast_level", "display": "meter" } },
+        { "type": "metafield", "settings": { "label": "Tastes like", "key": "tasting_notes" } },
+        { "type": "metafield", "settings": { "label": "Origin", "key": "origin" } },
+        { "type": "metafield", "settings": { "label": "Best for", "key": "brew_methods" } },
+        { "type": "metafield", "settings": { "label": "Caffeine", "key": "caffeine" } },
+        { "type": "price", "settings": { "label": "12 oz bag" } },
+        { "type": "add_to_cart" }
+      ]
+    }
+  ]
+}
+{% endschema %}

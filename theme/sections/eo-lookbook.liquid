@@ -1,0 +1,188 @@
+{%- comment -%}
+  Ember & Oak: shoppable lookbook.
+  One photo, up to 6 hotspot blocks (product + position in %). Each hotspot opens a small card with price and
+  a one-tap add to cart. The same products are listed under the photo as a plain list, so the section is
+  usable on a phone and with a keyboard or screen reader without aiming at dots.
+{%- endcomment -%}
+{{ 'eo-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'eo-cart.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'eo-lookbook.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <eo-lookbook class="eo-lookbook{% if section.settings.image_right %} eo-lookbook--image-right{% endif %}">
+      <div class="eo-lookbook__media">
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 1600
+            | image_tag:
+              loading: 'lazy',
+              widths: '375, 550, 750, 1100, 1500, 1600',
+              sizes: '(min-width: 990px) 60vw, calc(100vw - 30px)',
+              class: 'eo-lookbook__img'
+          }}
+        {%- else -%}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'eo-lookbook__img placeholder-svg' }}
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- assign product = block.settings.product -%}
+          <div
+            class="eo-hotspot"
+            style="--x: {{ block.settings.x }}%; --y: {{ block.settings.y }}%;"
+            {{ block.shopify_attributes }}
+          >
+            <button
+              type="button"
+              class="eo-hotspot__dot"
+              aria-expanded="false"
+              aria-controls="Hotspot-{{ block.id }}"
+              aria-label="{{ 'sections.eo_lookbook.show_product' | t: product: product.title | default: block.settings.label }}"
+            >
+              <span aria-hidden="true">{{ forloop.index }}</span>
+            </button>
+            <div
+              class="eo-hotspot__card{% if block.settings.x > 55 %} is-left{% endif %}{% if block.settings.y > 60 %} is-up{% endif %}"
+              id="Hotspot-{{ block.id }}"
+              hidden
+            >
+              {%- if product != blank -%}
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', class: 'eo-hotspot__thumb' }}
+                {%- endif -%}
+                <div>
+                  <a href="{{ product.url }}" class="eo-hotspot__title">{{ product.title | split: ' — ' | first | escape }}</a>
+                  <div class="eo-hotspot__price">{{ product.price | money }}</div>
+                  {%- assign variant = product.selected_or_first_available_variant -%}
+                  {%- if variant.available -%}
+                    <button type="button" class="button button--small eo-btn" data-eo-add="{{ variant.id }}">
+                      <span class="eo-btn-label">{{ 'products.product.add_to_cart' | t }}</span>
+                    </button>
+                  {%- endif -%}
+                </div>
+              {%- else -%}
+                <span>{{ block.settings.label | escape }}</span>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="eo-lookbook__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eo-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="{{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="rte eo-section-text">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        <ol class="eo-lookbook__list" role="list">
+          {%- for block in section.blocks -%}
+            {%- assign product = block.settings.product -%}
+            {%- if product != blank -%}
+              <li class="eo-lookbook__item" data-hotspot-index="{{ forloop.index0 }}">
+                <span class="eo-lookbook__num" aria-hidden="true">{{ forloop.index }}</span>
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', class: 'eo-lookbook__thumb' }}
+                {%- endif -%}
+                <span class="eo-lookbook__meta">
+                  <a href="{{ product.url }}" class="eo-lookbook__name">{{ product.title | split: ' — ' | first | escape }}</a>
+                  <span class="eo-muted">{{ product.price | money }}</span>
+                </span>
+                {%- assign variant = product.selected_or_first_available_variant -%}
+                {%- if variant.available -%}
+                  <button
+                    type="button"
+                    class="eo-round-btn eo-round-btn--add"
+                    data-eo-add="{{ variant.id }}"
+                    aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}"
+                  >
+                    <span class="eo-btn-label" aria-hidden="true">+</span>
+                  </button>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ol>
+
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link | default: routes.all_products_collection_url }}" class="button button--secondary">
+            {{- section.settings.button_label | escape -}}
+          </a>
+        {%- endif -%}
+      </div>
+    </eo-lookbook>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Shoppable lookbook",
+  "tag": "section",
+  "class": "section eo-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 6,
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Photo" },
+    { "type": "checkbox", "id": "image_right", "label": "Photo on the right (desktop)", "default": false },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop the look" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Our Saturday pour-over" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1"
+    },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "label", "label": "Label if no product", "default": "Product" },
+        { "type": "range", "id": "x", "label": "Horizontal position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "range", "id": "y", "label": "Vertical position", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shoppable lookbook",
+      "blocks": [
+        { "type": "hotspot", "settings": { "x": 30, "y": 40 } },
+        { "type": "hotspot", "settings": { "x": 65, "y": 60 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+// Fictional stockists (cafés and grocers) for the store locator. Names and street addresses are invented;
+// coordinates are near real neighbourhood centres so distances are realistic. Geocoded once, here, at seed time.
+export const locations = [
+  ['The Copper Kettle', 'cafe', '118 Bedford Ave', 'Brooklyn', 'NY', '11249', 40.7193, -73.9573, 'Daily 7am–6pm'],
+  ['Northside Provisions', 'grocer', '402 W 14th St', 'New York', 'NY', '10014', 40.7411, -74.0060, 'Daily 8am–9pm'],
+  ['Harbor Light Coffee', 'cafe', '27 Atlantic Ave', 'Boston', 'MA', '02110', 42.3561, -71.0510, 'Mon–Sat 7am–5pm'],
+  ['Fishtown Grind', 'cafe', '1310 Frankford Ave', 'Philadelphia', 'PA', '19125', 39.9710, -75.1340, 'Daily 7am–4pm'],
+  ['Union Market Pantry', 'grocer', '1309 5th St NE', 'Washington', 'DC', '20002', 38.9086, -76.9977, 'Daily 9am–8pm'],
+  ['Peachtree Roast Bar', 'cafe', '680 Ponce De Leon Ave', 'Atlanta', 'GA', '30308', 33.7725, -84.3655, 'Daily 7am–7pm'],
+  ['Little Havana Larder', 'grocer', '1501 SW 8th St', 'Miami', 'FL', '33135', 25.7654, -80.2176, 'Daily 8am–10pm'],
+  ['Southside Social', 'cafe', '1215 E 7th St', 'Charlotte', 'NC', '28204', 35.2140, -80.8290, 'Tue–Sun 7am–3pm'],
+  ['Music Row Coffee House', 'cafe', '1900 Division St', 'Nashville', 'TN', '37203', 36.1500, -86.7925, 'Daily 6:30am–6pm'],
+  ['Lakeview Corner Store', 'grocer', '3100 N Clark St', 'Chicago', 'IL', '60657', 41.9380, -87.6440, 'Daily 7am–11pm'],
+  ['Wicker Park Daily', 'cafe', '1520 N Milwaukee Ave', 'Chicago', 'IL', '60622', 41.9096, -87.6773, 'Daily 7am–5pm'],
+  ['North Loop Beanery', 'cafe', '210 N 1st Ave', 'Minneapolis', 'MN', '55401', 44.9860, -93.2700, 'Mon–Fri 6:30am–4pm'],
+  ['Corktown Commons', 'cafe', '1426 Michigan Ave', 'Detroit', 'MI', '48216', 42.3316, -83.0670, 'Daily 7am–5pm'],
+  ['Deep Ellum Dry Goods', 'grocer', '2700 Main St', 'Dallas', 'TX', '75226', 32.7845, -96.7840, 'Daily 9am–9pm'],
+  ['South Congress Cup', 'cafe', '1400 S Congress Ave', 'Austin', 'TX', '78704', 30.2490, -97.7500, 'Daily 7am–7pm'],
+  ['Heights Hearth Café', 'cafe', '345 W 19th St', 'Houston', 'TX', '77008', 29.8030, -95.4010, 'Daily 7am–6pm'],
+  ['RiNo Roastworks', 'cafe', '2601 Larimer St', 'Denver', 'CO', '80205', 39.7590, -104.9840, 'Daily 7am–5pm'],
+  ['Roosevelt Row Market', 'grocer', '702 N 5th St', 'Phoenix', 'AZ', '85004', 33.4570, -112.0680, 'Daily 8am–8pm'],
+  ['Silver Lake Supply', 'grocer', '3700 Sunset Blvd', 'Los Angeles', 'CA', '90026', 34.0870, -118.2700, 'Daily 8am–10pm'],
+  ['Venice Tide Coffee', 'cafe', '1201 Abbot Kinney Blvd', 'Los Angeles', 'CA', '90291', 33.9920, -118.4700, 'Daily 6:30am–5pm'],
+  ['North Park Pour', 'cafe', '3000 University Ave', 'San Diego', 'CA', '92104', 32.7480, -117.1300, 'Daily 7am–6pm'],
+  ['Mission Fog Café', 'cafe', '700 Valencia St', 'San Francisco', 'CA', '94110', 37.7610, -122.4215, 'Daily 7am–6pm'],
+  ['Pearl District Pantry', 'grocer', '1100 NW Glisan St', 'Portland', 'OR', '97209', 45.5265, -122.6825, 'Daily 8am–9pm'],
+  ['Capitol Hill Roasting Room', 'cafe', '1500 E Pike St', 'Seattle', 'WA', '98122', 47.6140, -122.3130, 'Daily 6am–7pm'],
+].map(([name, type, address, city, state, zip, lat, lng, hours]) => ({ name, type, address, city, state, zip, lat, lng, hours }));

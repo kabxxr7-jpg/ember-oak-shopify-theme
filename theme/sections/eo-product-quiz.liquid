@@ -1,0 +1,229 @@
+{%- comment -%}
+  Ember & Oak: "find your coffee" quiz.
+  Questions are blocks; each one is tied to a product metafield (custom.brew_methods, custom.flavor_profile,
+  custom.roast_level, custom.caffeine). The products of the chosen collection are rendered once as JSON with
+  those metafields, and the browser scores them: a match on a question adds its weight, a roast one step
+  away adds half, and a "must match" question filters. No app, no API calls, nothing leaves the page.
+{%- endcomment -%}
+{{ 'eo-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'eo-cart.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'eo-quiz.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign collection = section.settings.collection -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width page-width--narrow section-{{ section.id }}-padding">
+    <eo-quiz class="eo-quiz" data-section="{{ section.id }}">
+      <div class="eo-quiz__intro" data-step="intro">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eo-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 class="{{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.text != blank -%}
+          <div class="rte eo-section-text">{{ section.settings.text }}</div>
+        {%- endif -%}
+        <button type="button" class="button eo-quiz__start" data-start>
+          {{- section.settings.start_label | escape -}}
+        </button>
+        <noscript>
+          <p>
+            <a href="{{ collection.url | default: routes.all_products_collection_url }}" class="eo-link">
+              {{- 'sections.eo_quiz.browse_all' | t -}}
+            </a>
+          </p>
+        </noscript>
+      </div>
+
+      <form class="eo-quiz__form" data-form hidden novalidate>
+        <div
+          class="eo-quiz__progress"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="{{ section.blocks.size }}"
+          aria-valuenow="0"
+          aria-label="{{ 'sections.eo_quiz.progress' | t }}"
+        >
+          <span class="eo-quiz__progress-bar" data-progress></span>
+        </div>
+
+        {%- for block in section.blocks -%}
+          {%- assign multi = block.settings.multiple -%}
+          <fieldset
+            class="eo-quiz__step"
+            data-question
+            data-key="{{ block.settings.key }}"
+            data-weight="{{ block.settings.weight }}"
+            data-filter="{{ block.settings.must_match }}"
+            data-multi="{{ multi }}"
+            hidden
+            {{ block.shopify_attributes }}
+          >
+            <legend class="eo-quiz__legend">
+              <span class="eo-muted eo-quiz__count">
+                {{- 'sections.eo_quiz.question_count' | t: current: forloop.index, total: forloop.length -}}
+              </span>
+              <span class="h2">{{ block.settings.question | escape }}</span>
+            </legend>
+            {%- if block.settings.help != blank -%}
+              <p class="eo-muted">{{ block.settings.help | escape }}</p>
+            {%- endif -%}
+            <div class="eo-quiz__options">
+              {%- assign lines = block.settings.options | newline_to_br | split: '<br />' -%}
+              {%- for line in lines -%}
+                {%- assign parts = line | strip | split: '=' -%}
+                {%- if parts.size >= 2 -%}
+                  {%- assign value = parts[0] | strip -%}
+                  {%- assign label = parts[1] | strip -%}
+                  <label class="eo-option">
+                    <input
+                      type="{% if multi %}checkbox{% else %}radio{% endif %}"
+                      name="q-{{ block.id }}"
+                      value="{{ value | escape }}"
+                    >
+                    <span class="eo-option__box">{{ label | escape }}</span>
+                  </label>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+            <p class="eo-quiz__error" role="alert" data-error hidden>{{ 'sections.eo_quiz.pick_one' | t }}</p>
+            <div class="eo-quiz__nav">
+              <button type="button" class="button button--tertiary" data-back>{{ 'sections.eo_quiz.back' | t }}</button>
+              <button type="button" class="button" data-next>
+                {%- if forloop.last -%}
+                  {{- 'sections.eo_quiz.see_results' | t -}}
+                {%- else -%}
+                  {{- 'sections.eo_quiz.next' | t -}}
+                {%- endif -%}
+              </button>
+            </div>
+          </fieldset>
+        {%- endfor -%}
+      </form>
+
+      <div class="eo-quiz__results" data-results hidden tabindex="-1" aria-live="polite">
+        <p class="eo-eyebrow">{{ 'sections.eo_quiz.your_match' | t }}</p>
+        <div data-results-list></div>
+        <button type="button" class="button button--tertiary" data-restart>{{ 'sections.eo_quiz.restart' | t }}</button>
+      </div>
+
+      <script type="application/json" data-products>
+        [
+          {%- for product in collection.products limit: 50 -%}
+            {%- assign variant = product.selected_or_first_available_variant -%}
+            {
+              "id": {{ product.id | json }},
+              "title": {{ product.title | split: ' — ' | first | json }},
+              "url": {{ product.url | json }},
+              "image": {{ product.featured_image | image_url: width: 600 | json }},
+              "alt": {{ product.featured_image.alt | default: product.title | json }},
+              "price": {{ product.price | money | json }},
+              "variant": {{ variant.id | json }},
+              "available": {{ variant.available | json }},
+              "notes": {{ product.metafields.custom.tasting_notes.value | json }},
+              "attrs": {
+                "roast_level": {{ product.metafields.custom.roast_level.value | json }},
+                "brew_methods": {{ product.metafields.custom.brew_methods.value | json }},
+                "flavor_profile": {{ product.metafields.custom.flavor_profile.value | json }},
+                "caffeine": {{ product.metafields.custom.caffeine.value | json }}
+              }
+            }
+            {%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      </script>
+      <script type="application/json" data-strings>
+        {
+          "add": {{ 'products.product.add_to_cart' | t | json }},
+          "view": {{ 'sections.eo_quiz.view_product' | t | json }},
+          "match": {{ 'sections.eo_quiz.match_percent' | t | json }},
+          "also": {{ 'sections.eo_quiz.also_try' | t | json }},
+          "none": {{ 'sections.eo_quiz.no_match' | t | json }},
+          "why": {{ 'sections.eo_quiz.why' | t | json }}
+        }
+      </script>
+    </eo-quiz>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product quiz",
+  "tag": "section",
+  "class": "section eo-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 8,
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Products to recommend from" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "60-second quiz" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find your coffee" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h0"
+    },
+    { "type": "richtext", "id": "text", "label": "Intro text" },
+    { "type": "text", "id": "start_label", "label": "Start button", "default": "Start the quiz" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 48 }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "How do you brew?" },
+        { "type": "text", "id": "help", "label": "Help text" },
+        {
+          "type": "select",
+          "id": "key",
+          "label": "Matches product metafield",
+          "options": [
+            { "value": "brew_methods", "label": "custom.brew_methods" },
+            { "value": "flavor_profile", "label": "custom.flavor_profile" },
+            { "value": "roast_level", "label": "custom.roast_level" },
+            { "value": "caffeine", "label": "custom.caffeine" }
+          ],
+          "default": "brew_methods"
+        },
+        {
+          "type": "textarea",
+          "id": "options",
+          "label": "Answers",
+          "info": "One per line: metafield value = label shown. Use the value \"any\" for a no-preference answer.",
+          "default": "pour-over = Pour-over\ndrip = Drip machine\nfrench-press = French press\nespresso = Espresso\ncold-brew = Cold brew"
+        },
+        { "type": "checkbox", "id": "multiple", "label": "Allow more than one answer", "default": false },
+        { "type": "checkbox", "id": "must_match", "label": "Must match (filter out products that don't)", "default": false },
+        { "type": "range", "id": "weight", "label": "Weight", "min": 1, "max": 5, "step": 1, "default": 3 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product quiz",
+      "blocks": [{ "type": "question" }]
+    }
+  ]
+}
+{% endschema %}

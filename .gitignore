@@ -1,0 +1,10 @@
+node_modules/
+tools/node_modules/
+media/
+.shopify/
+.theme-check-home/
+.env
+*.log
+.DS_Store
+LEDGER.md
+portfolio/

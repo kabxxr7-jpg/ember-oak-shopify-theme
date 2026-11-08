@@ -1,0 +1,168 @@
+{%- comment -%}
+  Ember & Oak: stockist finder.
+  - Locations are "Store location" metaobjects (Admin > Content > Metaobjects), each with its own latitude and
+    longitude, so they were geocoded once when entered. Liquid prints them as one JSON list in the page.
+  - The shopper's ZIP is geocoded once (one request to the free zippopotam.us API, cached in localStorage),
+    or "Use my location" asks the browser instead. All sorting is distance math in the browser:
+    no map SDK, no API key, no per-search server cost.
+{%- endcomment -%}
+{{ 'eo-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'eo-locator.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign locations = shop.metaobjects.store_location.values -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <eo-locator class="eo-locator" data-limit="{{ section.settings.results }}" data-unit="{{ section.settings.unit }}">
+      <div class="eo-section-head">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="eo-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 class="{{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.text != blank -%}
+          <div class="rte eo-section-text">{{ section.settings.text }}</div>
+        {%- endif -%}
+      </div>
+
+      <form class="eo-locator__form" data-form novalidate>
+        <div class="field">
+          <input
+            class="field__input"
+            id="Zip-{{ section.id }}"
+            name="zip"
+            type="text"
+            inputmode="numeric"
+            autocomplete="postal-code"
+            pattern="[0-9]{5}"
+            maxlength="5"
+            placeholder="{{ 'sections.eo_locator.zip_label' | t }}"
+            aria-describedby="ZipStatus-{{ section.id }}"
+            required
+          >
+          <label class="field__label" for="Zip-{{ section.id }}">{{ 'sections.eo_locator.zip_label' | t }}</label>
+        </div>
+        <button type="submit" class="button">{{ 'sections.eo_locator.search' | t }}</button>
+        <button type="button" class="button button--secondary" data-geo>
+          {{- 'sections.eo_locator.use_location' | t -}}
+        </button>
+      </form>
+
+      <div class="eo-locator__filters" role="group" aria-label="{{ 'sections.eo_locator.filter' | t }}">
+        <label class="eo-pill"><input type="radio" name="kind-{{ section.id }}" value="all" checked> <span>{{ 'sections.eo_locator.all' | t }}</span></label>
+        <label class="eo-pill"><input type="radio" name="kind-{{ section.id }}" value="cafe"> <span>{{ 'sections.eo_locator.cafes' | t }}</span></label>
+        <label class="eo-pill"><input type="radio" name="kind-{{ section.id }}" value="grocer"> <span>{{ 'sections.eo_locator.grocers' | t }}</span></label>
+      </div>
+
+      <p class="eo-locator__status" id="ZipStatus-{{ section.id }}" role="status" data-status>
+        {{- 'sections.eo_locator.count' | t: count: locations.size -}}
+      </p>
+
+      <ol class="eo-locator__list" role="list" data-list>
+        {%- for loc in locations -%}
+          <li class="eo-store" data-kind="{{ loc.kind }}">
+            <div>
+              <h3 class="eo-store__name">{{ loc.name | escape }}</h3>
+              <p class="eo-muted">{{ loc.address | escape }}, {{ loc.city | escape }}, {{ loc.state | escape }} {{ loc.zip | escape }}</p>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ol>
+
+      {%- if section.settings.footnote != blank -%}
+        <p class="eo-muted eo-locator__footnote">{{ section.settings.footnote | escape }}</p>
+      {%- endif -%}
+
+      <script type="application/json" data-locations>
+        [
+          {%- for loc in locations -%}
+            {
+              "name": {{ loc.name.value | json }},
+              "kind": {{ loc.kind.value | json }},
+              "address": {{ loc.address.value | json }},
+              "city": {{ loc.city.value | json }},
+              "state": {{ loc.state.value | json }},
+              "zip": {{ loc.zip.value | json }},
+              "lat": {{ loc.latitude.value | json }},
+              "lng": {{ loc.longitude.value | json }},
+              "hours": {{ loc.hours.value | json }}
+            }
+            {%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      </script>
+      <script type="application/json" data-strings>
+        {
+          "count": {{ 'sections.eo_locator.count' | t: count: '__N__' | json }},
+          "near": {{ 'sections.eo_locator.near' | t: count: '__N__', place: '__PLACE__' | json }},
+          "locating": {{ 'sections.eo_locator.locating' | t | json }},
+          "badZip": {{ 'sections.eo_locator.bad_zip' | t | json }},
+          "notFound": {{ 'sections.eo_locator.not_found' | t | json }},
+          "geoDenied": {{ 'sections.eo_locator.geo_denied' | t | json }},
+          "yourLocation": {{ 'sections.eo_locator.your_location' | t | json }},
+          "directions": {{ 'sections.eo_locator.directions' | t | json }},
+          "cafe": {{ 'sections.eo_locator.cafe' | t | json }},
+          "grocer": {{ 'sections.eo_locator.grocer' | t | json }}
+        }
+      </script>
+    </eo-locator>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Store locator",
+  "tag": "section",
+  "class": "section eo-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Locations come from the \"Store location\" metaobject entries (Content > Metaobjects). Each entry needs a latitude and longitude."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stockists" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find Ember & Oak near you" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1"
+    },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "range", "id": "results", "label": "Results to show", "min": 3, "max": 24, "step": 1, "default": 8 },
+    {
+      "type": "select",
+      "id": "unit",
+      "label": "Distance unit",
+      "options": [
+        { "value": "mi", "label": "Miles" },
+        { "value": "km", "label": "Kilometres" }
+      ],
+      "default": "mi"
+    },
+    { "type": "text", "id": "footnote", "label": "Footnote" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 48 }
+  ],
+  "presets": [{ "name": "Store locator" }]
+}
+{% endschema %}

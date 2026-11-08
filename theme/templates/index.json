@@ -1,0 +1,261 @@
+{
+  "sections": {
+    "hero": {
+      "type": "image-banner",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "heading": "Roasted on Tuesday. In your cup by Friday.", "heading_size": "h0" } },
+        "text": {
+          "type": "text",
+          "settings": { "text": "Six small-batch coffees, roasted to order and shipped the same day.", "text_style": "subtitle" }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Shop coffee",
+            "button_link_1": "shopify://collections/coffee",
+            "button_style_secondary_1": false,
+            "button_label_2": "Find your coffee",
+            "button_link_2": "shopify://pages/find-your-coffee",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": ["heading", "text", "buttons"],
+      "settings": {
+        "image": "shopify://shop_images/hero.jpg",
+        "image_overlay_opacity": 40,
+        "image_height": "large",
+        "image_behavior": "none",
+        "desktop_content_position": "middle-left",
+        "desktop_content_alignment": "left",
+        "show_text_box": false,
+        "color_scheme": "scheme-3",
+        "stack_images_on_mobile": false,
+        "mobile_content_alignment": "left",
+        "show_text_below": false
+      }
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "coffee",
+        "products_to_show": 6,
+        "title": "This week's roasts",
+        "heading_size": "h1",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 3,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "link",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 56,
+        "padding_bottom": 36
+      }
+    },
+    "compare": {
+      "type": "eo-comparison-table",
+      "blocks": {
+        "roast": { "type": "metafield", "settings": { "label": "Roast", "key": "roast_level", "display": "meter" } },
+        "notes": { "type": "metafield", "settings": { "label": "Tastes like", "key": "tasting_notes", "display": "text" } },
+        "origin": { "type": "metafield", "settings": { "label": "Origin", "key": "origin", "display": "text" } },
+        "brew": { "type": "metafield", "settings": { "label": "Best for", "key": "brew_methods", "display": "text" } },
+        "caffeine": { "type": "metafield", "settings": { "label": "Caffeine", "key": "caffeine", "display": "text" } },
+        "price": { "type": "price", "settings": { "label": "12 oz bag" } },
+        "add": { "type": "add_to_cart", "settings": { "label": "Add to cart" } }
+      },
+      "block_order": ["roast", "notes", "origin", "brew", "caffeine", "price", "add"],
+      "settings": {
+        "eyebrow": "Side by side",
+        "heading": "Compare our coffees",
+        "heading_size": "h1",
+        "text": "<p>Every row is read from the product's metafields, so the table updates itself when a coffee changes.</p>",
+        "products": [
+          "morning-ember",
+          "golden-hour-guatemala",
+          "oak-and-honey-house-blend",
+          "highland-decaf",
+          "campfire-cold-brew-blend",
+          "midnight-hearth-espresso"
+        ],
+        "highlight_index": 3,
+        "highlight_label": "Most loved",
+        "color_scheme": "scheme-2",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "lookbook": {
+      "type": "eo-lookbook",
+      "blocks": {
+        "dripper": { "type": "hotspot", "settings": { "product": "ceramic-pour-over-dripper", "label": "Dripper", "x": 53, "y": 40 } },
+        "coffee": { "type": "hotspot", "settings": { "product": "morning-ember", "label": "Coffee", "x": 50, "y": 84 } },
+        "second": { "type": "hotspot", "settings": { "product": "golden-hour-guatemala", "label": "Coffee", "x": 83, "y": 66 } },
+        "mug": { "type": "hotspot", "settings": { "product": "stoneware-mug", "label": "Mug", "x": 30, "y": 92 } }
+      },
+      "block_order": ["dripper", "coffee", "second", "mug"],
+      "settings": {
+        "image": "shopify://shop_images/lookbook-pourover.jpg",
+        "image_right": false,
+        "eyebrow": "Shop the look",
+        "heading": "Our Saturday pour-over",
+        "heading_size": "h1",
+        "text": "<p>Tap a number on the photo, or add straight from the list. Everything on the counter is in the shop.</p>",
+        "button_label": "All brew gear",
+        "button_link": "shopify://collections/brew-gear",
+        "color_scheme": "scheme-1",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "quiz_promo": {
+      "type": "image-with-text",
+      "blocks": {
+        "caption": { "type": "caption", "settings": { "caption": "60-second quiz", "text_style": "caption-with-letter-spacing", "text_size": "medium" } },
+        "heading": { "type": "heading", "settings": { "heading": "Not sure where to start?", "heading_size": "h1" } },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Tell us how you brew and what you like in a cup. Four questions, and we match you to the bag that fits.</p>",
+            "text_style": "body"
+          }
+        },
+        "button": { "type": "button", "settings": { "button_label": "Take the quiz", "button_link": "shopify://pages/find-your-coffee", "button_style_secondary": false } }
+      },
+      "block_order": ["caption", "heading", "text", "button"],
+      "settings": {
+        "image": "shopify://shop_images/roaster.jpg",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "reviews": {
+      "type": "eo-testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Morning Ember tastes like blueberries. I didn't believe the bag until I made it as a pour-over. Now it's the only coffee in the house.</p>",
+            "author": "Priya S.",
+            "location": "Austin, TX",
+            "rating": 5,
+            "product": "morning-ember"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Ordered on Monday, roasted Tuesday, on my porch Thursday. You can smell how fresh it is when you open the bag.</p>",
+            "author": "Marcus L.",
+            "location": "Chicago, IL",
+            "rating": 5,
+            "product": "oak-and-honey-house-blend"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>A decaf that doesn't taste like cardboard. I drink Highland after dinner most nights.</p>",
+            "author": "Hannah K.",
+            "location": "Portland, OR",
+            "rating": 5,
+            "product": "highland-decaf"
+          }
+        },
+        "t4": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>The quiz sent me to Campfire for cold brew and it was spot on. Sweet, smooth and no bitterness at all.</p>",
+            "author": "Diego R.",
+            "location": "San Diego, CA",
+            "rating": 5,
+            "product": "campfire-cold-brew-blend"
+          }
+        },
+        "t5": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Midnight Hearth pulls a thick, chocolatey shot on my home machine. Lovely in a flat white too.</p>",
+            "author": "Sam T.",
+            "location": "Brooklyn, NY",
+            "rating": 4,
+            "product": "midnight-hearth-espresso"
+          }
+        }
+      },
+      "block_order": ["t1", "t2", "t3", "t4", "t5"],
+      "settings": {
+        "eyebrow": "Reviews (sample)",
+        "heading": "What our regulars say",
+        "heading_size": "h1",
+        "autoplay": true,
+        "autoplay_speed": 6,
+        "color_scheme": "scheme-2",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "stockists_promo": {
+      "type": "image-with-text",
+      "blocks": {
+        "caption": { "type": "caption", "settings": { "caption": "Stockists", "text_style": "caption-with-letter-spacing", "text_size": "medium" } },
+        "heading": { "type": "heading", "settings": { "heading": "Find us in 24 cafés and grocers", "heading_size": "h1" } },
+        "text": {
+          "type": "text",
+          "settings": { "text": "<p>Enter your ZIP code and we'll sort every stockist by distance from you.</p>", "text_style": "body" }
+        },
+        "button": { "type": "button", "settings": { "button_label": "Find a stockist", "button_link": "shopify://pages/stockists", "button_style_secondary": false } }
+      },
+      "block_order": ["caption", "heading", "text", "button"],
+      "settings": {
+        "image": "shopify://shop_images/cafe.jpg",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "text_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "left",
+        "section_color_scheme": "scheme-1",
+        "color_scheme": "scheme-1",
+        "padding_top": 36,
+        "padding_bottom": 56
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "blocks": {
+        "heading": { "type": "heading", "settings": { "heading": "Roast-day emails", "heading_size": "h1" } },
+        "paragraph": {
+          "type": "paragraph",
+          "settings": { "text": "<p>One email a week: what's on the roaster and a brew tip. No spam.</p>" }
+        },
+        "email_form": { "type": "email_form", "settings": {} }
+      },
+      "block_order": ["heading", "paragraph", "email_form"],
+      "settings": { "color_scheme": "scheme-3", "full_width": true, "padding_top": 56, "padding_bottom": 56 }
+    }
+  },
+  "order": ["hero", "featured", "compare", "lookbook", "quiz_promo", "reviews", "stockists_promo", "newsletter"]
+}

@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "locator": {
+      "type": "eo-store-locator",
+      "settings": {
+        "eyebrow": "Stockists",
+        "heading": "Find Ember & Oak near you",
+        "heading_size": "h0",
+        "text": "<p>Enter a US ZIP code, or let your browser share your location, and we'll sort every café and grocer by distance.</p>",
+        "results": 8,
+        "unit": "mi",
+        "footnote": "Demo data: these stockists are fictional. Addresses are invented and placed near real neighbourhoods so the distances are realistic.",
+        "color_scheme": "scheme-1",
+        "padding_top": 48,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["locator"]
+}

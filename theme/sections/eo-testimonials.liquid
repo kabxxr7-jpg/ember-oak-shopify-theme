@@ -1,0 +1,157 @@
+{%- comment -%}
+  Ember & Oak: testimonial slider.
+  CSS scroll-snap does the sliding (works without JS, swipes natively on phones); the small custom element
+  adds prev/next buttons, dots, keyboard support and an optional autoplay that stops on hover, focus,
+  hidden tabs and prefers-reduced-motion.
+{%- endcomment -%}
+{{ 'eo-sections.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'eo-testimonials.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    <div class="eo-section-head eo-section-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eo-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="{{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+
+    <eo-testimonials
+      class="eo-testimonials"
+      data-autoplay="{{ section.settings.autoplay }}"
+      data-speed="{{ section.settings.autoplay_speed }}"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="{{ section.settings.heading | default: 'Testimonials' | escape }}"
+    >
+      <div class="eo-testimonials__track" data-track tabindex="0" aria-live="polite">
+        {%- for block in section.blocks -%}
+          <figure
+            class="eo-quote"
+            id="Slide-{{ section.id }}-{{ forloop.index }}"
+            role="group"
+            aria-roledescription="slide"
+            aria-label="{{ forloop.index }} / {{ forloop.length }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="eo-stars" role="img" aria-label="{{ block.settings.rating }} out of 5 stars">
+              {%- for i in (1..5) -%}
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" class="{% if i > block.settings.rating %}is-off{% endif %}">
+                  <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9z"/>
+                </svg>
+              {%- endfor -%}
+            </div>
+            <blockquote class="eo-quote__text">{{ block.settings.quote }}</blockquote>
+            <figcaption class="eo-quote__author">
+              {%- if block.settings.avatar != blank -%}
+                {{ block.settings.avatar | image_url: width: 96 | image_tag: loading: 'lazy', class: 'eo-quote__avatar', alt: '' }}
+              {%- else -%}
+                <span class="eo-quote__initial" aria-hidden="true">{{ block.settings.author | slice: 0 }}</span>
+              {%- endif -%}
+              <span>
+                <strong>{{ block.settings.author | escape }}</strong>
+                {%- if block.settings.location != blank -%}
+                  <span class="eo-muted"> · {{ block.settings.location | escape }}</span>
+                {%- endif -%}
+                {%- if block.settings.product != blank -%}
+                  <br><a href="{{ block.settings.product.url }}" class="eo-link">{{ 'sections.eo_testimonials.on_product' | t: product: block.settings.product.title }}</a>
+                {%- endif -%}
+              </span>
+            </figcaption>
+          </figure>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.blocks.size > 1 -%}
+        <div class="eo-testimonials__controls">
+          <button type="button" class="eo-round-btn" data-prev aria-label="{{ 'general.slider.previous_slide' | t }}">
+            <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+          </button>
+          <div class="eo-dots" data-dots>
+            {%- for block in section.blocks -%}
+              <button
+                type="button"
+                class="eo-dot"
+                aria-label="{{ 'general.slider.name' | t }} {{ forloop.index }}"
+                aria-controls="Slide-{{ section.id }}-{{ forloop.index }}"
+              ></button>
+            {%- endfor -%}
+          </div>
+          <button type="button" class="eo-round-btn" data-next aria-label="{{ 'general.slider.next_slide' | t }}">
+            <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </eo-testimonials>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonial slider",
+  "tag": "section",
+  "class": "section eo-section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "max_blocks": 12,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Reviews" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "What our regulars say" },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1"
+    },
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-rotate", "default": true },
+    { "type": "range", "id": "autoplay_speed", "label": "Seconds per slide", "min": 3, "max": 12, "step": 1, "unit": "s", "default": 6 },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-2" },
+    { "type": "header", "content": "t:sections.all.padding.section_padding_heading" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_top", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "t:sections.all.padding.padding_bottom", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "richtext", "id": "quote", "label": "Quote", "default": "<p>The best coffee I have had at home.</p>" },
+        { "type": "text", "id": "author", "label": "Name", "default": "Customer name" },
+        { "type": "text", "id": "location", "label": "Location" },
+        { "type": "range", "id": "rating", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "image_picker", "id": "avatar", "label": "Photo (optional)" },
+        { "type": "product", "id": "product", "label": "Product reviewed (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial slider",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}
