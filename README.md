@@ -126,7 +126,14 @@ theme/assets/eo-sections.css                theme/templates/index.json, page.qui
 
 - **theme-check** (`shopify theme check`, CLI 5.0.1): 0 errors. 0 warnings in the custom files; the 9 warnings reported are all in unmodified Dawn 16.1.1 files (for example `UnusedAssign` in `main-search.liquid`).
 - **Unit tests:** `node --test tests/` runs 13 tests on the quiz scoring and the locator maths and cache.
-- **Lighthouse:** see [`docs/lighthouse.md`](docs/lighthouse.md).
+- **Lighthouse 12.8.2** (live store, median of 3-5 runs):
+  - Home: mobile performance 79, desktop 99
+  - Quiz page: mobile performance 90
+  - Stockists page: mobile performance 87
+  - Accessibility: 100 on home, quiz and stockists
+  - SEO: 100
+  - CLS: 0 everywhere
+  - Details and what was fixed: [`docs/lighthouse.md`](docs/lighthouse.md).
 
 ## Credits
 
