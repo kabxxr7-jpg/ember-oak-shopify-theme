@@ -51,7 +51,7 @@
               class="eo-hotspot__dot"
               aria-expanded="false"
               aria-controls="Hotspot-{{ block.id }}"
-              aria-label="{{ 'sections.eo_lookbook.show_product' | t: product: product.title | default: block.settings.label }}"
+              aria-label="{{ forloop.index }}. {{ 'sections.eo_lookbook.show_product' | t: product: product.title | default: block.settings.label }}"
             >
               <span aria-hidden="true">{{ forloop.index }}</span>
             </button>

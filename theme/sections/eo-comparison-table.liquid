@@ -119,7 +119,13 @@
                           </span>
                           <span class="eo-meter__label">{{ mf.value | replace: '-', ' ' | capitalize }}</span>
                         {%- else -%}
-                          {{ mf.value | replace: '-', ' ' | capitalize | escape }}
+                          {%- assign raw = mf.value | append: '' -%}
+                          {%- assign lowered = raw | downcase -%}
+                          {%- if raw == lowered -%}
+                            {{ raw | replace: '-', ' ' | capitalize | escape }}
+                          {%- else -%}
+                            {{ raw | escape }}
+                          {%- endif -%}
                         {%- endif -%}
                     {%- endcase -%}
                   </td>

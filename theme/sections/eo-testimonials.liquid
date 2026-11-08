@@ -41,7 +41,7 @@
     >
       <div class="eo-testimonials__track" data-track tabindex="0" aria-live="polite">
         {%- for block in section.blocks -%}
-          <figure
+          <div
             class="eo-quote"
             id="Slide-{{ section.id }}-{{ forloop.index }}"
             role="group"
@@ -49,6 +49,7 @@
             aria-label="{{ forloop.index }} / {{ forloop.length }}"
             {{ block.shopify_attributes }}
           >
+            <figure class="eo-quote__figure">
             <div class="eo-stars" role="img" aria-label="{{ block.settings.rating }} out of 5 stars">
               {%- for i in (1..5) -%}
                 <svg aria-hidden="true" focusable="false" viewBox="0 0 20 20" class="{% if i > block.settings.rating %}is-off{% endif %}">
@@ -73,7 +74,8 @@
                 {%- endif -%}
               </span>
             </figcaption>
-          </figure>
+            </figure>
+          </div>
         {%- endfor -%}
       </div>
 

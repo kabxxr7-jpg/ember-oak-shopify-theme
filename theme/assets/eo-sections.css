@@ -99,7 +99,7 @@
 .eo-compare__table thead .eo-badge { margin-bottom: 0.8rem; }
 .eo-compare__table .eo-chips { justify-content: center; }
 .eo-compare__price { font-size: 1.6rem; font-weight: 700; }
-.eo-compare__hint { margin: 1rem 0 0; font-size: 1.3rem; text-align: center; color: rgba(var(--color-foreground), 0.6); }
+.eo-compare__hint { margin: 1rem 0 0; font-size: 1.3rem; text-align: center; color: rgba(var(--color-foreground), 0.78); }
 .eo-meter { display: inline-flex; gap: 0.4rem; vertical-align: middle; }
 .eo-meter__dot { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: rgba(var(--color-foreground), 0.15); }
 .eo-meter__dot.is-on { background: #6b3a1e; }
@@ -134,13 +134,14 @@
   padding: 2.8rem 2.4rem;
   border-radius: 1.6rem;
   background: rgb(var(--color-background));
+  background: color-mix(in srgb, rgb(var(--color-background)) 35%, #fff);
   box-shadow: 0 1px 0 rgba(var(--color-foreground), 0.06), 0 12px 30px -18px rgba(var(--color-shadow), 0.45);
   scroll-snap-align: start;
 }
 .eo-stars { display: flex; gap: 0.2rem; }
 .eo-stars svg { width: 1.8rem; height: 1.8rem; fill: #d99a1e; }
 .eo-stars svg.is-off { fill: rgba(var(--color-foreground), 0.15); }
-.eo-quote__text { margin: 0; flex: 1; font-family: var(--font-heading-family); font-size: 1.9rem; line-height: 1.45; border: 0; padding: 0; }
+.eo-quote__text { margin: 0; flex: 1; font-family: var(--font-heading-family); font-weight: 400; font-size: 1.9rem; line-height: 1.45; border: 0; padding: 0; }
 .eo-quote__text p { margin: 0; }
 .eo-quote__author { display: flex; align-items: center; gap: 1.2rem; font-size: 1.4rem; line-height: 1.5; }
 .eo-quote__avatar,
@@ -354,3 +355,6 @@
 .eo-store__side { display: grid; align-content: space-between; justify-items: end; gap: 0.8rem; text-align: right; font-size: 1.4rem; flex: none; }
 .eo-store__distance { font-size: 1.8rem; }
 .eo-locator__footnote { margin-top: 2rem; font-size: 1.3rem; }
+.eo-compare__table .button { min-width: 0; padding: 0 1.6rem; white-space: nowrap; }
+
+.eo-quote__figure { display: flex; flex-direction: column; gap: 1.6rem; flex: 1; margin: 0; }

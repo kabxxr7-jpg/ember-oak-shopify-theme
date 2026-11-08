@@ -24,6 +24,8 @@
 
     {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
+    {% else %}
+      <meta name="description" content="{{ shop.name | escape }}: small-batch coffee roasted to order. Demonstration store, test checkout only.">
     {% endif %}
 
     {% render 'meta-tags' %}
